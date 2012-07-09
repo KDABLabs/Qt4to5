@@ -379,9 +379,11 @@ class PortRenamedMethods : public ast_matchers::MatchFinder::MatchCallback {
         Result.Nodes.getStmtAs<MemberExpr>("expr");
     const MemberExpr *Exact =
         Result.Nodes.getStmtAs<MemberExpr>("exact");
+    const Expr *Func =
+        Result.Nodes.getStmtAs<Expr>("func");
 
     bool overriddenVirtual = false;
-    if (!Exact) {
+    if (!Exact && !Func) {
       ValueDecl *V = E->getMemberDecl();
       CXXMethodDecl *M = dyn_cast<CXXMethodDecl>(V);
 
@@ -396,7 +398,7 @@ class PortRenamedMethods : public ast_matchers::MatchFinder::MatchCallback {
       }
     }
 
-    if (!(overriddenVirtual || Exact))
+    if (!(overriddenVirtual || Exact || Func))
       return;
 
     std::string ArgText = getText(*Result.SourceManager, *Call);
@@ -492,6 +494,10 @@ int portMethod(const CompilationDatabase &Compilations)
             allOf(
               callee(function(hasName(Rename_Old))),
               callee(id("expr", memberExpression()))
+            ),
+            allOf(
+              callee(function(hasName(matchName))),
+              callee(id("func", expression()))
             )
           )
         )

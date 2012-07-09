@@ -38,7 +38,10 @@ if not os.path.exists("porting/compile_commands.json"):
 
 # Porting functions
 def renameMethod(className, oldName, newName):
-  execCommand("git grep -lw " + oldName + " | xargs " + qt4to5Binary + " -rename-class=::" + className + " -rename-old=" + oldName + " -rename-new=" + newName + " " + os.getcwd() + " " + os.getcwd() + "/porting")
+  renameClass = ""
+  if className:
+    renameClass = " -rename-class=::" + className
+  execCommand("git grep -lw " + oldName + " | xargs " + qt4to5Binary + renameClass + " -rename-old=" + oldName + " -rename-new=" + newName + " " + os.getcwd() + " " + os.getcwd() + "/porting")
   createCommit("Port uses of " + className + "::" + oldName + " to " + newName)
 
 def portQtEscape():
