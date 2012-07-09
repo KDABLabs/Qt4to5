@@ -27,7 +27,7 @@ def setupEnv():
   os.mkdir("porting")
   os.chdir("porting")
 
-  execCommand(cmakeBinary + ' ..')
+  execCommand(cmakeBinary + ' .. -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE')
   # Consider running make here to ensure that required generated files get generated (moc and ui files)
 
   os.chdir("..")
