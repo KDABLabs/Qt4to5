@@ -108,13 +108,10 @@ def portFromQt4Deprecated():
   renameMethod("QRect", "unite", "united")
   renameMethod("QRegion", "intersect", "intersected")
   renameMethod("QRect", "intersect", "intersected")
-  renameMethod("QSslCertificate", "alternateSubjectNames", "subjectAlternativeNames")
 
   renameMethod("QFont", "removeSubstitution", "removeSubstitutions")
 
-  renameMethod("QHeaderView", "setMovable", "setSectionsMovable")
   renameMethod("QHeaderView", "setClickable", "setSectionsClickable")
-  renameMethod("QHeaderView", "setResizeMode", "setSectionResizeMode")
 
   replaceQVariantTemplateFunctions()
   replaceQObjectTemplateFunctions()
@@ -130,6 +127,9 @@ def port4to5():
 def portFromQt5Deprecated():
   portQtEscape()
   portEnum("QSsl::SslProtocol", "QSsl", "TlsV1", "TlsV1_0")
+  renameMethod("QHeaderView", "setResizeMode", "setSectionResizeMode")
+  renameMethod("QHeaderView", "setMovable", "setSectionsMovable")
+  renameMethod("QSslCertificate", "alternateSubjectNames", "subjectAlternativeNames")
 
 
 # These function invokations do the actual porting.
