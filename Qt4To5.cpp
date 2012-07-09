@@ -482,16 +482,16 @@ int portMethod(const CompilationDatabase &Compilations)
   PortRenamedMethods RenameMethodCallback(&Tool.getReplacements());
 
   Finder.addMatcher(
-      Id("call",
-        Call(
-          AnyOf(
-            AllOf(
-              Callee(Function(HasName(matchName))),
-              Callee(Id("exact", MemberExpression()))
+      id("call",
+        call(
+          anyOf(
+            allOf(
+              callee(function(hasName(matchName))),
+              callee(id("exact", memberExpression()))
             ),
-            AllOf(
-              Callee(Function(HasName(Rename_Old))),
-              Callee(Id("expr", MemberExpression()))
+            allOf(
+              callee(function(hasName(Rename_Old))),
+              callee(id("expr", memberExpression()))
             )
           )
         )
@@ -509,20 +509,20 @@ int portQMetaMethodSignature(const CompilationDatabase &Compilations)
   PortMetaMethods MetaMethodCallback(&Tool.getReplacements());
 
   Finder.addMatcher(
-    Statement(
-      Statement(
+    statement(
+      statement(
         has(
-          Id("call",
-            Call(
-              Callee(
-                MemberExpression()
+          id("call",
+            call(
+              callee(
+                memberExpression()
               )
             )
           )
         ),
-        has(Call(Callee(Function(HasName("::QMetaMethod::signature")))))
+        has(call(callee(function(hasName("::QMetaMethod::signature")))))
       ),
-      Expression(Not(clang::ast_matchers::BinaryOperator()))
+      expression(unless(clang::ast_matchers::binaryOperator()))
       )
     , &MetaMethodCallback);
 
@@ -538,17 +538,17 @@ int portQtEscape(const CompilationDatabase &Compilations)
   PortQtEscape4To5 Callback(&Tool.getReplacements());
 
   Finder.addMatcher(
-    Id("call",
-      Call(
-        Callee(Function(HasName(QtEscapeFunction))),
-        HasArgument(
+    id("call",
+      call(
+        callee(function(hasName(QtEscapeFunction))),
+        hasArgument(
           0,
-          AnyOf(
-            BindTemporaryExpression(has(Id("ctor", ConstructorCall()))),
-            BindTemporaryExpression(has(Id("operator", OverloadedOperatorCall()))),
-            Id("operator", OverloadedOperatorCall()),
-            Id("ctor", ConstructorCall()),
-            Id("expr", Expression())
+          anyOf(
+            bindTemporaryExpression(has(id("ctor", constructorCall()))),
+            bindTemporaryExpression(has(id("operator", overloadedOperatorCall()))),
+            id("operator", overloadedOperatorCall()),
+            id("ctor", constructorCall()),
+            id("expr", expression())
           )
         )
       )
@@ -567,9 +567,9 @@ int portAtomics(const CompilationDatabase &Compilations)
   PortAtomic AtomicCallback(&Tool.getReplacements());
 
   Finder.addMatcher(
-      Id("call",
-        Call(
-          Callee(Function(HasName("::QBasicAtomicInt::operator int")))
+      id("call",
+        call(
+          callee(function(hasName("::QBasicAtomicInt::operator int")))
         )
       ), &AtomicCallback);
 
@@ -585,31 +585,31 @@ int portQImageText(const CompilationDatabase &Compilations)
   RemoveArgument ImageTextCallback(&Tool.getReplacements());
 
   Finder.addMatcher(
-      Id("call",
-        Call(
-          Callee(Function(HasName("::QImage::text"))),
-          HasArgument(
+      id("call",
+        call(
+          callee(function(hasName("::QImage::text"))),
+          hasArgument(
             0,
-            Id("prevArg", Expression())
+            id("prevArg", expression())
           ),
-          HasArgument(
+          hasArgument(
             1,
-            Id("arg", Expression(clang::ast_matchers::IntegerLiteral(Equals(0))))
+            id("arg", expression(clang::ast_matchers::integerLiteral(equals(0))))
           )
         )
       ), &ImageTextCallback);
 
   Finder.addMatcher(
-      Id("call",
-        Call(
-          Callee(Function(HasName("::QImage::setText"))),
-          HasArgument(
+      id("call",
+        call(
+          callee(function(hasName("::QImage::setText"))),
+          hasArgument(
             0,
-            Id("prevArg", Expression())
+            id("prevArg", expression())
           ),
-          HasArgument(
+          hasArgument(
             1,
-            Id("arg", Expression(clang::ast_matchers::IntegerLiteral(Equals(0))))
+            id("arg", expression(clang::ast_matchers::integerLiteral(equals(0))))
           )
         )
       ), &ImageTextCallback);
@@ -626,12 +626,12 @@ int portViewDataChanged(const CompilationDatabase &Compilations)
   PortView2 ViewCallback2(&Tool.getReplacements());
 
   Finder.addMatcher(
-      Id("funcDecl", Method(
-        HasName("dataChanged"),
-        OfClass(
-          AllOf (
-            IsDerivedFrom("QAbstractItemView"),
-            Not(HasName("QAbstractItemView"))
+      id("funcDecl", method(
+        hasName("dataChanged"),
+        ofClass(
+          allOf(
+            isDerivedFrom("QAbstractItemView"),
+            unless(hasName("QAbstractItemView"))
           )
         )
       ))
@@ -645,7 +645,7 @@ namespace clang {
 namespace ast_matchers {
 const internal::VariadicDynCastAllOfMatcher<
   clang::Decl,
-  clang::EnumConstantDecl> EnumeratorConstant;
+  clang::EnumConstantDecl> enumeratorConstant;
 }
 }
 
@@ -658,7 +658,7 @@ int portEnum(const CompilationDatabase &Compilations)
   PortEnum Callback(&Tool.getReplacements());
 
   Finder.addMatcher(
-      Id("call", DeclarationReference(To(EnumeratorConstant(HasName(RenameEnum + "::" + Rename_Old)))))
+      id("call", declarationReference(to(enumeratorConstant(hasName(RenameEnum + "::" + Rename_Old)))))
     ,
     &Callback);
 
