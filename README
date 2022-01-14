@@ -1,3 +1,5 @@
+** NOTE: This Project is no longer supported or maintained by KDAB. The code is kept here for historical reasons and the hopes that it proves useful. **
+
 This tool ports from Qt 4 to Qt 5.
 
 To build it:
